@@ -169,11 +169,34 @@
             border-radius: 18px;
             border: 1px solid rgba(212, 170, 109, 0.48);
             box-shadow: 0 20px 42px rgba(0, 0, 0, 0.36), 0 0 20px rgba(226, 189, 122, 0.25);
-            padding: 34px 30px 42px;
+            padding: 34px 30px 92px;
             position: relative;
             transform: translateY(18px);
             opacity: 0;
             animation: none;
+        }
+
+        .close-letter {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 34px;
+            height: 34px;
+            border: 1px solid rgba(120, 85, 58, 0.35);
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.72);
+            color: #5a3a36;
+            font-size: 1.15rem;
+            line-height: 1;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            transition: background 180ms ease, transform 180ms ease;
+        }
+
+        .close-letter:hover {
+            background: rgba(255, 255, 255, 0.95);
+            transform: scale(1.04);
         }
 
         .letter-overlay.is-visible .letter-card {
@@ -223,14 +246,17 @@
             text-align: right;
             font-style: italic;
             margin-top: 10px;
+            margin-bottom: 14px;
         }
 
         .wax-seal {
             position: absolute;
-            right: 16px;
-            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 10px;
             width: 62px;
             height: 62px;
+            pointer-events: none;
         }
 
         .stem-sway {
@@ -363,12 +389,25 @@
             .letter-card {
                 width: min(94vw, 640px);
                 padding: 24px 20px 36px;
+                padding-bottom: 88px;
                 border-radius: 15px;
+            }
+
+            .signature {
+                margin-bottom: 14px;
+            }
+
+            .close-letter {
+                width: 32px;
+                height: 32px;
+                top: 8px;
+                right: 8px;
             }
 
             .wax-seal {
                 width: 54px;
                 height: 54px;
+                bottom: 10px;
             }
         }
     </style>
@@ -562,6 +601,7 @@
 
     <section id="letterOverlay" class="letter-overlay" aria-hidden="true">
         <article class="letter-card" aria-label="Love letter">
+            <button id="closeLetterBtn" class="close-letter" type="button" aria-label="Close letter">&times;</button>
             <h1>My dearest Nisyel,</h1>
             <p>
                 Okay, so I know I have been annoyingly busy lately. At this point, even I am tired of hearing myself say "just one more thing". I have been all over the place, and I know it has not felt great on your side.
@@ -592,12 +632,35 @@
         (function () {
             const revealBtn = document.getElementById('revealBtn');
             const overlay = document.getElementById('letterOverlay');
+            const closeBtn = document.getElementById('closeLetterBtn');
 
-            revealBtn.addEventListener('click', function () {
+            function openLetter() {
                 overlay.classList.add('is-visible');
                 overlay.setAttribute('aria-hidden', 'false');
                 revealBtn.style.opacity = '0';
                 revealBtn.style.pointerEvents = 'none';
+            }
+
+            function closeLetter() {
+                overlay.classList.remove('is-visible');
+                overlay.setAttribute('aria-hidden', 'true');
+                revealBtn.style.opacity = '1';
+                revealBtn.style.pointerEvents = 'auto';
+            }
+
+            revealBtn.addEventListener('click', openLetter);
+            closeBtn.addEventListener('click', closeLetter);
+
+            overlay.addEventListener('click', function (event) {
+                if (event.target === overlay) {
+                    closeLetter();
+                }
+            });
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape' && overlay.classList.contains('is-visible')) {
+                    closeLetter();
+                }
             });
         })();
     </script>
